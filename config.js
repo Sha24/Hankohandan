@@ -3,5 +3,5 @@
 // 이 키는 앱/웹에 들어가도 되는 공개용 키예요. (secret / service_role 키는 절대 넣지 마세요)
 window.HANKO_CONFIG = {
   supabaseUrl: "https://mnzryhyqibqxfiwgnqhf.supabase.co",
-  supabaseKey: "PASTE_PUBLISHABLE_KEY_HERE"
+  supabaseKey: "sb_publishable_TxGNA-wdLZdcuCvIeZ8UuA_sQqXiQsb"
 };
