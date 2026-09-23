@@ -399,7 +399,12 @@ async function handleAuthCallback(url) {
   let u; try { u = new URL(url); } catch { return; }
   const hash = new URLSearchParams((u.hash || "").slice(1));
   const err = u.searchParams.get("error_description") || hash.get("error_description");
-  if (err) { Sync.status = "로그인하지 못했어요: " + err; render(); return; }
+  if (err) {
+    Sync.status = /exchange external code/i.test(err)
+      ? "로그인하지 못했어요: Supabase의 Google 설정(Client ID·Client Secret)이 Google Cloud 값과 맞지 않아요. 관리자가 다시 넣어야 해요."
+      : "로그인하지 못했어요: " + err;
+    S.view = "settings"; render(); return;
+  }
   const code = u.searchParams.get("code"); if (!code) return;
   const v = pref("pkce");
   if (!v) { Sync.status = "로그인 정보가 사라졌어요. 다시 로그인해 주세요."; render(); return; }
@@ -504,7 +509,7 @@ async function initStore() {
   render();
   const pending = (() => { try { return Bridge.takePendingLink() || ""; } catch { return ""; } })();
   if (pending) handleAuthCallback(pending);
-  else if (!IS_ANDROID && new URLSearchParams(location.search).get("code")) {
+  else if (!IS_ANDROID && /[?&#](code|error|error_description)=/.test(location.search + location.hash)) {
     const here = location.href; history.replaceState(null, "", location.pathname);
     handleAuthCallback(here);
   } else syncNow();
